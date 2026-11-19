@@ -1,0 +1,89 @@
+---------------------------------------------------------------------------------------------------------------------
+ Article Title: Projection of multidimensional count data IRT models
+         and their empirical indistinguishability
+ Authors: Blinded for Review
+ Affiliation: Blinded for Review
+ Contact: Blinded for Review
+---------------------------------------------------------------------------------------------------------------------
+
+This file summarizes how the core functions for projection and person parameter 
+estimation work.
+
+# Projection ###################################################################
+
+# To get item parameters of the projected model load functions_projection.R 
+# and perform
+
+# get_nu(Sigma, # covariance of theta in mirt (KxK)
+# alpha,       # matrix of discrimination parameters in mirt (I x K)
+# delta,       # vector of item intercepts in mirt (I x 1)
+# nu_m)        # vector dispersion parameters in mirt (I x 1)
+
+################################################################################
+
+
+# Person parameters ############################################################
+
+Load functions_person_parameters.R
+
+For ML person parameter estimation in the unidimensional model or projected model
+(local item dependencies are neglected) perform
+
+ML_ability_uirt(yj,        # Score-vector of person j
+                param_uirt) # data.frame of alpha, delta, nu for all items
+
+#output:
+# root   = estimation of person parameter theta
+# f2     = value of second derivative in estimation of theta
+
+-------------------------------------------------------------------------------
+
+For ML person parameter estimation in the multidimensional model perform
+
+ML_multi(alpha,   # matrix of discrimination parameters for MIRT (I x K)
+         delta,   # vector of item intercepts (length = I)
+         nu,   # vector of dispersion parameters (length = I)
+         yj)  # response vector of one person (length = I)
+         
+
+output:
+estimate = estimated person parameter, 
+stdEr = stdEr from maxLik function
+hessian = Hessian matrix
+
+# Standard errors person parameters #############################################
+
+For standard errors in the unidimensional model:
+
+SE_uni(param_uirt, # c(alpha_tilde, delta_tilde, nu)
+      dat,         # matrix item response row=person, column = item
+      theta_hat,   # theta estimation
+      theta_hatL2) # 
+
+output: dataframe with
+SE_Info = standard error based on Fisher information
+
+-------------------------------------------------------------------------------- 
+
+For standard errors in the multidimensional model:
+SE_multi(alpha, # matrix of discrimination parameters in MIRT (IxK)
+         delta, # vector of item intercepts in MIRT (length I)
+         nu,    # vector of dispersion parameters in MIRT (length I)
+        dat,   # matrix of item responses row=person, column = item
+        theta_hat, # matrix of estimations for theta
+        hessianm){ # list of hessian matrices
+
+output:
+out$SE_fisher = standard errors based on Fisher information
+out$SE_hesse  = standard errors based on Hesse matrix
+
+################################################################################
+
+Limitations of the implementation: 
+We applied Gauss-Hermite quadrature which is only suitable for small K. 
+As a consequence, person parameter estimation functions are only implemented for K < 5.
+
+The implementation inherits limitations of the countirt package: 
+The look up grid to obtain CMP quantities via interpolation ranges for
+mu between 0.001 and 200, and for nu between 0.01 and 50. We implemented
+check_mu to check whether mu lies within these borders for the mirt and projected model.
