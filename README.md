@@ -19,6 +19,8 @@ In this repository, we provide:
 
 - A short application explanation of the core functions in Short_tutorial.txt
 
+- Example_BIS.R for the application example
+
 - the folder simulation study which contains simulation scripts and results. 
   In addition we provide scripts to preprocess the results from Beisemann et al. (2025)
   for our simulation study in preprocessing_paper_online and preprocessing_OSS.R. 
